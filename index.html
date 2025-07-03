@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>풀스크린 순차 GIF 재생</title>
+    <style>
+        /* 기본 HTML/Body 스타일: 화면 전체를 사용하고 스크롤바 제거 */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* 스크롤바 숨김 */
+            background-color: #000; /* 배경색을 검은색으로 설정하여 GIF가 더 돋보이게 함 */
+            display: flex; /* 자식 요소를 중앙 정렬하기 위해 flexbox 사용 */
+            justify-content: center; /* 가로 중앙 정렬 */
+            align-items: center; /* 세로 중앙 정렬 */
+        }
+
+        /* GIF를 담을 컨테이너 스타일 */
+        .gif-container {
+            position: relative; /* 자식 GIF 이미지의 위치 지정을 위한 기준점 */
+            width: 100%;
+            height: 100%;
+            display: flex; /* 내부 GIF를 중앙 정렬하기 위해 flexbox 사용 */
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 모든 GIF 이미지에 대한 기본 스타일 */
+        .gif-container img {
+            position: absolute; /* 컨테이너 내에서 절대 위치로 배치하여 겹치게 함 */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* 이미지 중앙을 기준으로 배치 */
+            
+            /* 화면 가득 채우면서 비율 유지 */
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            max-width: none;
+            max-height: none;
+            object-fit: cover; /* 이미지가 컨테이너를 가득 채우도록 확대/축소 (일부 잘릴 수 있음) */
+            
+            display: none; /* 기본적으로 모든 GIF를 숨김 */
+            opacity: 0; /* 투명도를 0으로 설정 (사라지는 효과를 위해) */
+            transition: opacity 1s ease-in-out; /* 투명도 변화에 애니메이션 효과 추가 (1초 동안 부드럽게) */
+        }
+
+        /* 현재 활성화된(보여야 할) GIF 이미지 스타일 */
+        .gif-container img.active {
+            display: block; /* 활성화되면 보이게 함 */
+            opacity: 1; /* 투명도를 1로 설정하여 완전히 보이게 함 */
+        }
+    </style>
+</head>
+<body>
+    <div class="gif-container">
+        <img src="여성.gif" alt="여성 GIF" class="gif-item active">
+        <img src="open.gif" alt="OPEN GIF" class="gif-item">
+        <img src="ball.gif" alt="BALL GIF" class="gif-item">
+        </div>
+
+    <script>
+        const gifs = document.querySelectorAll('.gif-item'); // 모든 GIF 이미지 요소를 가져옴
+        let currentIndex = 0; // 현재 활성화된 GIF의 인덱스
+        const displayDuration = 5000; // 각 GIF가 화면에 표시될 시간 (5초 = 5000 밀리초)
+
+        // 다음 GIF를 표시하는 함수
+        function showNextGif() {
+            // 현재 활성화된 GIF가 있다면 'active' 클래스를 제거하여 숨깁니다.
+            if (gifs[currentIndex]) {
+                gifs[currentIndex].classList.remove('active');
+            }
+
+            // 다음 GIF의 인덱스로 이동합니다.
+            // 모든 GIF를 재생한 후 다시 첫 번째 GIF로 돌아가게 합니다 (루프).
+            currentIndex = (currentIndex + 1) % gifs.length;
+
+            // 다음 GIF에 'active' 클래스를 추가하여 보이게 합니다.
+            if (gifs[currentIndex]) {
+                gifs[currentIndex].classList.add('active');
+            }
+
+            // 'displayDuration' 시간 후에 'showNextGif' 함수를 다시 호출하여 다음 GIF로 전환합니다.
+            setTimeout(showNextGif, displayDuration);
+        }
+
+        // 페이지 로드 후 처음 실행되는 부분
+        // GIF 파일이 하나라도 있다면, 'displayDuration' 시간 후에 순차 재생을 시작합니다.
+        // 첫 번째 GIF는 HTML에서 'active' 클래스가 이미 적용되어 있으므로 바로 보입니다.
+        if (gifs.length > 0) {
+            setTimeout(showNextGif, displayDuration);
+        }
+    </script>
+</body>
+</html>
